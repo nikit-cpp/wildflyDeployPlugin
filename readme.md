@@ -75,6 +75,7 @@ deployConfig {
 ```
 
 III. Usage
+
 For previously defined boxes usage variants is:
 ```
 gradle deployLocal
