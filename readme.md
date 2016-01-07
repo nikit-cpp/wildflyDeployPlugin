@@ -15,7 +15,7 @@ buildscript {
     }
     dependencies {
         classpath "com.github.nikit.cpp.helpers:db:1.0" // need for use helpers.MysqlHelper
-        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.1"
+        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.2"
     }
 }
 apply plugin: "com.github.nikit.cpp.wildfly.deploy"
