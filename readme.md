@@ -47,10 +47,12 @@ deployConfig {
             'Local' : [
                     wildfly:new helpers.Server(),
                     before: {
+                        String box, helpers.Server server ->
+                        println "before hello box=${box}, server=${server}"
                         helpers.MysqlHelper.dropAndRestore(new helpers.Mysql(user:'root', pass:'root', dbName:'test', patches:['scripts/bootstrap.sql']))
                     },
                     after: { String box, helpers.Server server ->
-                            println "box=${box}, server=${server}"
+                            println "after goodbye box=${box}, server=${server}"
                     }
             ],
             'LocalDomain' : [
