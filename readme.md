@@ -45,8 +45,8 @@ So, firstly will be deployed server.jar, further client.war, ...
 Add to build.gradle:
 ```groovy
 deployConfig {
-    deployFile = "scripts/deploy", // list of files to deploy
-    jbossHome = "/path/to/wildfly/home", // if null than will used system environment JBOSS_HOME or WILDFLY_HOME
+    deployFile = "scripts/deploy" // list of files to deploy
+    jbossHome = "/path/to/wildfly/home" // if null than will used system environment JBOSS_HOME or WILDFLY_HOME
     boxes = [
             'Local' : [
                     wildfly:new helpers.Server(),
@@ -92,7 +92,7 @@ Also, all this closures can take parameters (String boxKey, helpers.Server serve
 So, minimal configuration is
 ```groovy
 deployConfig {
-	deployFile = "scripts/deploy", // list of files to deploy
+	deployFile = "scripts/deploy" // list of files to deploy
 	boxes = [
 		'Local' : [
 			wildfly:new helpers.Server()
