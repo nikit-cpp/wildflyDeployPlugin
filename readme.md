@@ -42,7 +42,7 @@ to build.gradle:
 ```
 deployConfig {
     deployFile = "scripts/deploy", // list of files to deploy
-    jbossHome = "/path/to/wildfly/home", // is optional
+    jbossHome = "/path/to/wildfly/home", // if null than will used system environment JBOSS_HOME or WILDFLY_HOME
     boxes = [
             'Local' : [
                     wildfly:new helpers.Server(),
