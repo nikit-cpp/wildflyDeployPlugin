@@ -46,18 +46,19 @@ deployConfig {
     boxes = [
             'Local' : [
                     wildfly:new helpers.Server(),
-                    before: {
+                    beforeDeploy: {
                         String box, helpers.Server server ->
                         println "before hello box=${box}, server=${server}"
                         helpers.MysqlHelper.dropAndRestore(new helpers.Mysql(user:'root', pass:'root', dbName:'test', patches:['scripts/bootstrap.sql']))
                     },
-                    after: { String box, helpers.Server server ->
-                            println "after goodbye box=${box}, server=${server}"
-                    }
+                    afterUndeploy: { String box, helpers.Server server ->
+                            println "after undeploy box=${box}, server=${server}"
+                    },
+                    afterRedeploy: { println "closure parameters are optional" }
             ],
             'LocalDomain' : [
                     wildfly:new helpers.Server(domain: true),
-                    before: {
+                    beforeDeploy: {
                         helpers.MysqlHelper.dropAndRestore(new helpers.Mysql(user: 'root', pass: 'root', dbName: 'test', patches: ['scripts/bootstrap.sql']))
                     }
             ],
@@ -68,6 +69,7 @@ deployConfig {
                     wildfly:new helpers.Server(username:'admin', password:'123', hostname:'192.168.1.10', domain: true,
                             domainServerGroups: ['main-server-group', 'other-server-group']),
                     before: {
+                        println "runs always"
                         helpers.MysqlHelper.dropAndRestore(new helpers.Mysql(mysqlHost: '192.168.1.11', user: 'admin', pass: 'password', dbName: 'test',
                                 patches: ['scripts/bootstrap.sql', 'scripts/dev.sql']))
                     }
