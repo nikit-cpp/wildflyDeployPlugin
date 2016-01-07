@@ -1,4 +1,6 @@
-This plugin allows to deploy files specified in list file
+This plugin allows to deploy files specified in list file.
+
+Ideal for deploy multiple artifacts in correct order.
 
 I. Install plugin:
 
@@ -37,6 +39,8 @@ server/build/libs/server.jar
 client/build/libs/client.war
 ws/build/libs/webserwice.war
 ```
+So, firstly will be deployed server.jar, further client.war, ...
+
 
 to build.gradle:
 ```groovy
@@ -85,6 +89,17 @@ All all this closures are optional.
 
 Also, all this closures can take parameters (String boxKey, helpers.Server server), (helpers.Server server), or none.
 
+So, minimal configuration is
+```groovy
+	deployConfig {
+    deployFile = "scripts/deploy", // list of files to deploy
+    boxes = [
+            'Local' : [
+                    wildfly:new helpers.Server()
+            ]
+	}
+```
+... for standalone local WildFly.
 
 III. Usage
 
