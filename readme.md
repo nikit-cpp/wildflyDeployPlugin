@@ -14,7 +14,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.github.nikit.cpp.helpers:db:1.0" // unnecessary
+        classpath "com.github.nikit.cpp.helpers:db:1.0" // need for use helpers.MysqlHelper
         classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.1"
     }
 }
