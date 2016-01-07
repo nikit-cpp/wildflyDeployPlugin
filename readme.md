@@ -77,6 +77,14 @@ deployConfig {
     ]
 }
 ```
+As you see, you can add closures to box map with keys 'beforeDeploy', 'beforeRedeploy', 'beforeUndeploy',  'afterDeploy', 'afterRedeploy', 'afterUndeploy'.
+
+Closures with names 'before' and 'after' are executed always.
+
+All all this closures are optional.
+
+Also, all this closures can take parameters (String boxKey, helpers.Server server), (helpers.Server server), or none.
+
 
 III. Usage
 
@@ -91,3 +99,5 @@ gradle deployMySuperWithoutDb
 gradle undeployDev
 ...
 ```
+IV. Bugs/limitations
+ * In current implementation of [JbossDeployer](https://github.com/nikit-cpp/helpers/blob/master/deployer/src/main/groovy/helpers/JbossDeployer.groovy) you cannot deploy file if path is contains spaces, e. g. "/path/to/my folder/artifact.jar"
