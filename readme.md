@@ -17,7 +17,7 @@ buildscript {
     }
     dependencies {
         classpath "com.github.nikit.cpp.helpers:db:1.0" // need for use helpers.MysqlHelper
-        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.3"
+        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.4"
     }
 }
 apply plugin: "com.github.nikit.cpp.wildfly.deploy"
@@ -115,5 +115,3 @@ gradle deployMySuperWithoutDb
 gradle undeployDev
 ...
 ```
-IV. Bugs/limitations
- * In current implementation of [JbossDeployer](https://github.com/nikit-cpp/helpers/blob/master/deployer/src/main/groovy/helpers/JbossDeployer.groovy) you cannot deploy file if path is contains spaces, e. g. "/path/to/my folder/artifact.jar"
