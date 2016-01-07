@@ -42,7 +42,7 @@ ws/build/libs/webserwice.war
 So, firstly will be deployed server.jar, further client.war, ...
 
 
-to build.gradle:
+Add to build.gradle:
 ```groovy
 deployConfig {
     deployFile = "scripts/deploy", // list of files to deploy
