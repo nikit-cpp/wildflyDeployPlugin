@@ -91,13 +91,14 @@ Also, all this closures can take parameters (String boxKey, helpers.Server serve
 
 So, minimal configuration is
 ```groovy
-	deployConfig {
-    deployFile = "scripts/deploy", // list of files to deploy
-    boxes = [
-            'Local' : [
-                    wildfly:new helpers.Server()
-            ]
-	}
+deployConfig {
+	deployFile = "scripts/deploy", // list of files to deploy
+	boxes = [
+		'Local' : [
+			wildfly:new helpers.Server()
+		]
+	]
+}
 ```
 ... for standalone local WildFly.
 
