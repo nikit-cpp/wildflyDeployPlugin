@@ -1,46 +1,82 @@
-#Info
-This plugin adds `providedCompile` configuration if not exist,
-prepares WildFly deploymets recurcively walks on dependency
-tree - copy dependency jar to `build\dependency-workspace` and
-adds Dependencies string to theirs maifests.
-Also plugin can copy dependency jar to WildFly deploymets directory.
+This plugin allows to deploy files specified in list file
 
-#TODO
-* in task deployDeployments make deploys via jboss-cli
-
-#Usage
-1. Install plugin:  
+I. Install plugin:
 ```
 buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            url 'https://dl.bintray.com/nikit007/mvn-repo/'
+        }
     }
-  }
-  dependencies {
-    classpath "gradle.plugin.com.github.nikit.cpp:wildflyPlugin:0.9"
-  }
+    dependencies {
+        classpath "com.github.nikit.cpp.helpers:db:1.0" // unnecessary
+        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.1"
+    }
 }
-apply plugin: "com.github.nikit.cpp.wildfly"
+apply plugin: "com.github.nikit.cpp.wildfly.deploy"
 ```
-2. Add WildFly extension:  
+
+II. Configure:
+Firstly, create list file
 ```
-wildfly {
-	deploymentDestination = 'C:\\path\\to\\wildfly\\standalone\\deployments' // or '${WILDFLY_HOME}\\standalone\\deployments'
-	addFirstLevelDependenciesToManifest = true // generate manifest and add firstLevel dependencies
-	printTree = false // print dependency tree for debug purposes
-}
+mkdir scripts
+vim scripts/deploy
 ```
-3. If nesserary change `compile` configuration to `providedCompile` for those dependencies that are prolided by WildFly,
-for example:  
+add:
 ```
-dependencies {
-	compile 'org.apache.qpid:qpid-client:0.32'
-	providedCompile 'org.jboss.spec.javax.ejb:jboss-ejb-api_3.2_spec:1.0.0.Final'
-	providedCompile 'org.jboss.spec.javax.jms:jboss-jms-api_2.0_spec:1.0.0.Final'
+#Comments and
+
+# empty lines are allowed
+server/build/libs/server.jar
+client/build/libs/client.war
+ws/build/libs/webserwice.war
+```
+
+```
+deployConfig {
+    deployFile = "scripts/deploy", // list of files to deploy
+    jbossHome = "/path/to/wildfly/home", // is optional
+    boxes = [
+            'Local' : [
+                    wildfly:new helpers.Server(),
+                    before: {
+                        helpers.MysqlHelper.dropAndRestore(new helpers.Mysql(user:'root', pass:'root', dbName:'test', patches:['scripts/bootstrap.sql']))
+                    },
+                    after: { String box, helpers.Server server ->
+                            println "box=${box}, server=${server}"
+                    }
+            ],
+            'LocalDomain' : [
+                    wildfly:new helpers.Server(domain: true),
+                    before: {
+                        helpers.MysqlHelper.dropAndRestore(new helpers.Mysql(user: 'root', pass: 'root', dbName: 'test', patches: ['scripts/bootstrap.sql']))
+                    }
+            ],
+            'MySuperWithoutDb': [
+                    wildfly:new helpers.Server(username:'nikita', password:'qwerty', hostname:'192.168.1.200')
+            ],
+            'Dev': [
+                    wildfly:new helpers.Server(username:'admin', password:'123', hostname:'192.168.1.10', domain: true,
+                            domainServerGroups: ['main-server-group', 'other-server-group']),
+                    before: {
+                        helpers.MysqlHelper.dropAndRestore(new helpers.Mysql(mysqlHost: '192.168.1.11', user: 'admin', pass: 'password', dbName: 'test',
+                                patches: ['scripts/bootstrap.sql', 'scripts/dev.sql']))
+                    }
+            ]
+    ]
 }
 ```
 
-#Gradle tasks
-* `gradle modules` copy all dependent jars into `C:\Path\To\Project\build\dependency-workspace`
-and makes modules template from it (you have to add common Java EE dependencies, e. g. javax.api ...)
+III. Usage
+For previously defined boxes usage variants is:
+```
+gradle deployLocal
+gradle undeployLocal
+gradle redeployLocal
+...
+gradle deployMySuperWithoutDb
+...
+```
