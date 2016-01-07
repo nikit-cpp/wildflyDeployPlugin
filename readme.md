@@ -1,6 +1,8 @@
 This plugin allows to deploy files specified in list file
 
 I. Install plugin:
+
+add to build.gradle
 ```
 buildscript {
     repositories {
@@ -20,6 +22,7 @@ apply plugin: "com.github.nikit.cpp.wildfly.deploy"
 ```
 
 II. Configure:
+
 Firstly, create list file
 ```
 mkdir scripts
@@ -35,6 +38,7 @@ client/build/libs/client.war
 ws/build/libs/webserwice.war
 ```
 
+to build.gradle:
 ```
 deployConfig {
     deployFile = "scripts/deploy", // list of files to deploy
@@ -78,5 +82,7 @@ gradle undeployLocal
 gradle redeployLocal
 ...
 gradle deployMySuperWithoutDb
+...
+gradle undeployDev
 ...
 ```
