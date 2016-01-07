@@ -1,9 +1,11 @@
-This plugin allows to deploy files specified in list file
+This plugin allows to deploy files specified in list file.
+
+Ideal for deploy multiple artifacts in correct order.
 
 I. Install plugin:
 
 add to build.gradle
-```
+```groovy
 buildscript {
     repositories {
         maven {
@@ -24,7 +26,7 @@ apply plugin: "com.github.nikit.cpp.wildfly.deploy"
 II. Configure:
 
 Firstly, create list file
-```
+```bash
 mkdir scripts
 vim scripts/deploy
 ```
@@ -37,12 +39,14 @@ server/build/libs/server.jar
 client/build/libs/client.war
 ws/build/libs/webserwice.war
 ```
+So, firstly will be deployed server.jar, further client.war, ...
 
-to build.gradle:
-```
+
+Add to build.gradle:
+```groovy
 deployConfig {
-    deployFile = "scripts/deploy", // list of files to deploy
-    jbossHome = "/path/to/wildfly/home", // if null than will used system environment JBOSS_HOME or WILDFLY_HOME
+    deployFile = "scripts/deploy" // list of files to deploy
+    jbossHome = "/path/to/wildfly/home" // if null than will used system environment JBOSS_HOME or WILDFLY_HOME
     boxes = [
             'Local' : [
                     wildfly:new helpers.Server(),
@@ -77,11 +81,31 @@ deployConfig {
     ]
 }
 ```
+As you see, you can add closures to box map with keys 'beforeDeploy', 'beforeRedeploy', 'beforeUndeploy',  'afterDeploy', 'afterRedeploy', 'afterUndeploy'.
+
+Closures with names 'before' and 'after' are executed always.
+
+All all this closures are optional.
+
+Also, all this closures can take parameters (String boxKey, helpers.Server server), (helpers.Server server), or none.
+
+So, minimal configuration is
+```groovy
+deployConfig {
+	deployFile = "scripts/deploy" // list of files to deploy
+	boxes = [
+		'Local' : [
+			wildfly:new helpers.Server()
+		]
+	]
+}
+```
+... for standalone local WildFly.
 
 III. Usage
 
 For previously defined boxes usage variants is:
-```
+```groovy
 gradle deployLocal
 gradle undeployLocal
 gradle redeployLocal
@@ -91,3 +115,5 @@ gradle deployMySuperWithoutDb
 gradle undeployDev
 ...
 ```
+IV. Bugs/limitations
+ * In current implementation of [JbossDeployer](https://github.com/nikit-cpp/helpers/blob/master/deployer/src/main/groovy/helpers/JbossDeployer.groovy) you cannot deploy file if path is contains spaces, e. g. "/path/to/my folder/artifact.jar"
