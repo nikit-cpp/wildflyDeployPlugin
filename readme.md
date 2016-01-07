@@ -3,7 +3,7 @@ This plugin allows to deploy files specified in list file
 I. Install plugin:
 
 add to build.gradle
-```
+```groovy
 buildscript {
     repositories {
         maven {
@@ -24,7 +24,7 @@ apply plugin: "com.github.nikit.cpp.wildfly.deploy"
 II. Configure:
 
 Firstly, create list file
-```
+```bash
 mkdir scripts
 vim scripts/deploy
 ```
@@ -39,7 +39,7 @@ ws/build/libs/webserwice.war
 ```
 
 to build.gradle:
-```
+```groovy
 deployConfig {
     deployFile = "scripts/deploy", // list of files to deploy
     jbossHome = "/path/to/wildfly/home", // if null than will used system environment JBOSS_HOME or WILDFLY_HOME
@@ -81,7 +81,7 @@ deployConfig {
 III. Usage
 
 For previously defined boxes usage variants is:
-```
+```groovy
 gradle deployLocal
 gradle undeployLocal
 gradle redeployLocal
