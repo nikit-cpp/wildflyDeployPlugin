@@ -105,7 +105,7 @@ deployConfig {
 III. Usage
 
 For previously defined boxes usage variants is:
-```groovy
+```
 gradle deployLocal
 gradle undeployLocal
 gradle redeployLocal
