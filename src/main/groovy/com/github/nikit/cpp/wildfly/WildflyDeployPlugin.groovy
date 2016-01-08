@@ -13,6 +13,7 @@ class WildflyDeployPlugin implements Plugin<Project> {
     Map boxes
     String deployFile
     String jbossHome
+    Closure createArtifactNamesClosure
 
     void apply(Project project) {
         ExtensionContainer ec = project.extensions
@@ -22,6 +23,7 @@ class WildflyDeployPlugin implements Plugin<Project> {
             boxes = project[extensionName].boxes
             deployFile = project[extensionName].deployFile
             jbossHome = project[extensionName].jbossHome
+            createArtifactNamesClosure = project[extensionName].artifactNamesClosure
 
             if (taskName.startsWith("redeploy")) {
                 def envMatcher = (taskName =~ /redeploy(.*)/)
@@ -116,20 +118,20 @@ class WildflyDeployPlugin implements Plugin<Project> {
     }
 
     void redeploy ( helpers.Server server ) {
-        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome)
+        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure)
         deployer.readFile(deployFile)
         deployer.undeployList()
         deployer.deployList()
     }
 
     void deploy ( helpers.Server server ) {
-        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome)
+        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure)
         deployer.readFile(deployFile)
         deployer.deployList()
     }
 
     void undeploy ( helpers.Server server ) {
-        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome)
+        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure)
         deployer.readFile(deployFile)
         deployer.undeployList()
     }
@@ -140,4 +142,5 @@ class WildflyPluginExtension {
     Map boxes
     String deployFile
     String jbossHome
+    Closure artifactNamesClosure
 }
