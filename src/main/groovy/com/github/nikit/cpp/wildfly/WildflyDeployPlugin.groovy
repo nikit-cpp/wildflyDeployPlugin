@@ -14,6 +14,7 @@ class WildflyDeployPlugin implements Plugin<Project> {
     String deployFile
     String jbossHome
     Closure createArtifactNamesClosure
+    boolean force
 
     void apply(Project project) {
         ExtensionContainer ec = project.extensions
@@ -24,6 +25,7 @@ class WildflyDeployPlugin implements Plugin<Project> {
             deployFile = project[extensionName].deployFile
             jbossHome = project[extensionName].jbossHome
             createArtifactNamesClosure = project[extensionName].artifactNamesClosure
+            force = (project[extensionName].force==null) ? false : project[extensionName].force
 
             if (taskName.startsWith("redeploy")) {
                 def envMatcher = (taskName =~ /redeploy(.*)/)
@@ -118,20 +120,20 @@ class WildflyDeployPlugin implements Plugin<Project> {
     }
 
     void redeploy ( helpers.Server server ) {
-        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure)
+        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure, force)
         deployer.readFile(deployFile)
         deployer.undeployList()
         deployer.deployList()
     }
 
     void deploy ( helpers.Server server ) {
-        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure)
+        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure, force)
         deployer.readFile(deployFile)
         deployer.deployList()
     }
 
     void undeploy ( helpers.Server server ) {
-        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure)
+        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure, force)
         deployer.readFile(deployFile)
         deployer.undeployList()
     }
@@ -139,6 +141,7 @@ class WildflyDeployPlugin implements Plugin<Project> {
 }
 
 class WildflyPluginExtension {
+    boolean force
     Map boxes
     String deployFile
     String jbossHome
