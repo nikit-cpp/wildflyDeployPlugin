@@ -39,13 +39,21 @@ class WildflyDeployPlugin implements Plugin<Project> {
                     Closure beforeClosure = boxes[env_name].before
                     Closure afterClosure = boxes[env_name].after
 
-                    Closure beforeRedeployClosure = boxes[env_name].beforeRedeploy
-                    Closure afterRedeployClosure = boxes[env_name].afterRedeploy
+                    Closure beforeDeployClosure = boxes[env_name].beforeDeploy
+                    Closure afterDeployClosure = boxes[env_name].afterDeploy
+                    Closure beforeUndeployClosure = boxes[env_name].beforeUndeploy
+                    Closure afterUndeployClosure = boxes[env_name].afterUndeploy
 
                     callClosureWithMultipleParameters(beforeClosure, server, env_name)
-                    callClosureWithMultipleParameters(beforeRedeployClosure, server, env_name)
-                    redeploy(server)
-                    callClosureWithMultipleParameters(afterRedeployClosure, server, env_name)
+
+                    callClosureWithMultipleParameters(beforeUndeployClosure, server, env_name)
+                    undeploy(server)
+                    callClosureWithMultipleParameters(afterUndeployClosure, server, env_name)
+
+                    callClosureWithMultipleParameters(beforeDeployClosure, server, env_name)
+                    deploy(server)
+                    callClosureWithMultipleParameters(afterDeployClosure, server, env_name)
+
                     callClosureWithMultipleParameters(afterClosure, server, env_name)
                 }
             }
@@ -117,13 +125,6 @@ class WildflyDeployPlugin implements Plugin<Project> {
                 throw new RuntimeException('Alowed: "String boxKey, helpers.Server server", "helpers.Server server", or none')
         }
 
-    }
-
-    void redeploy ( helpers.Server server ) {
-        helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure, force)
-        deployer.readFile(deployFile)
-        deployer.undeployList()
-        deployer.deployList()
     }
 
     void deploy ( helpers.Server server ) {

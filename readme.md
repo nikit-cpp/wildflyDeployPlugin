@@ -17,7 +17,7 @@ buildscript {
     }
     dependencies {
         classpath "com.github.nikit.cpp.helpers:db:1.0.6" // need for use helpers.MysqlHelper
-        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.6"
+        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.7"
     }
 }
 apply plugin: "com.github.nikit.cpp.wildfly.deploy"
@@ -57,8 +57,7 @@ deployConfig {
                     },
                     afterUndeploy: { String box, helpers.Server server ->
                             println "after undeploy box=${box}, server=${server}"
-                    },
-                    afterRedeploy: { println "closure parameters are optional" }
+                    }
             ],
             'LocalDomain' : [
                     wildfly:new helpers.Server(domain: true),
@@ -81,7 +80,7 @@ deployConfig {
     ]
 }
 ```
-As you see, you can add closures to box map with keys 'beforeDeploy', 'beforeRedeploy', 'beforeUndeploy',  'afterDeploy', 'afterRedeploy', 'afterUndeploy'.
+As you see, you can add closures to box map with keys 'beforeDeploy', 'beforeUndeploy', 'afterDeploy', 'afterUndeploy'.
 
 Closures with names 'before' and 'after' are executed always.
 
@@ -148,6 +147,9 @@ gradle deployMySuperWithoutDb
 gradle undeployDev
 ...
 ```
+
+redeployLocal is combination undeployLocal +  deployLocal
+
 IV. Bugs/limitations
  * In current implementation of [JbossDeployer](https://github.com/nikit-cpp/helpers/blob/master/deployer/src/main/groovy/helpers/JbossDeployer.groovy) you cannot deploy file if file name is contains spaces, e. g. "/path/to/folder/my artifact.jar"
 but "/path/to/my folder/artifact.jar" are deploys correctly.

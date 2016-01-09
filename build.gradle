@@ -28,7 +28,7 @@ dependencies {
     compile "com.github.nikit.cpp.helpers:deployer:1.0.6"
 }
 
-version = "1.0.6"
+version = "1.0.7"
 group = "com.github.nikit.cpp"
 
 // gradle publishPlugins
