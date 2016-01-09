@@ -35,11 +35,11 @@ add:
 #Comments and
 
 # empty lines are allowed
-server/build/libs/server.jar
-client/build/libs/client.war
-ws/build/libs/webserwice.war
+server/build/libs/server-0.1.jar
+client/build/libs/client-0.1.war
+ws/build/libs/webserwice-0.1.war
 ```
-So, firstly will be deployed server.jar, further client.war, ...
+So, firstly will be deployed server-0.1.jar, further client-0.1.war, ...
 
 
 Add to build.gradle:
@@ -101,6 +101,31 @@ deployConfig {
 }
 ```
 ... for standalone local WildFly.
+
+
+And, you can use artifactNamesClosure for automatic undeploy previous versions:
+```groovy
+deployConfig {
+	deployFile = "scripts/deploy" // list of files to deploy
+    artifactNamesClosure = {
+        helpers.JbossDeployer deployer,
+        File file ->
+            String fileName = file.name
+            int dash = helpers.StringUtils.rfind(fileName, '-' as char)
+            String newArtifactName = fileName.substring(0, dash)
+            Closure findPreviousVersionArtifactClosure = {
+                helpers.Artifact a ->
+                    return getArtifactName(a) == newArtifactName
+            }
+            return [ runtimeName: fileName, displayName: fileName, undeployName: deployer.findOne(findPreviousVersionArtifactClosure)?.displayName]
+    }
+    boxes = [
+		'Local' : [
+			wildfly:new helpers.Server()
+		]
+	]
+}
+```
 
 III. Usage
 
