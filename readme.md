@@ -144,7 +144,7 @@ gradle undeployDev
 ...
 ```
 
-redeployLocal is combination undeployLocal +  deployLocal
+redeployLocal is combination undeployLocal + deployLocal
 
 IV. Bugs/limitations
  * In current implementation of [JbossDeployer](https://github.com/nikit-cpp/helpers/blob/master/deployer/src/main/groovy/helpers/JbossDeployer.groovy) you cannot deploy file if file name is contains spaces, e. g. "/path/to/folder/my artifact.jar"
