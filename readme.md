@@ -106,25 +106,21 @@ deployConfig {
 And, you can use artifactNamesClosure for automatic undeploy previous versions:
 ```groovy
 String getArtifactName(helpers.Artifact a){
-    int downSpace = helpers.StringUtils.rfind(a.displayName, '-' as char)
-    if(downSpace==-1){
+    int dash = helpers.StringUtils.rfind(a.displayName, '-' as char)
+    if (dash == -1){
         return a.displayName
     }
-    return a.displayName.substring(0, downSpace)
+    return a.displayName.substring(0, dash)
 }
 
 deployConfig {
-	deployFile = "scripts/deploy" // list of files to deploy
+    deployFile = "scripts/deploy" // list of files to deploy
     artifactNamesClosure = {
         helpers.JbossDeployer deployer,
         File file ->
             String fileName = file.name
-            int dash = helpers.StringUtils.rfind(fileName, '-' as char)
-            String newArtifactName = fileName.substring(0, dash)
-            Closure findPreviousVersionArtifactClosure = {
-                helpers.Artifact a ->
-                    return getArtifactName(a) == newArtifactName
-            }
+            String newArtifactName = getArtifactName(new helpers.Artifact(displayName: file.name))
+            Closure findPreviousVersionArtifactClosure = { helpers.Artifact a -> return getArtifactName(a) == newArtifactName }
             return [ runtimeName: fileName, displayName: fileName, undeployName: deployer.findOne(findPreviousVersionArtifactClosure)?.displayName]
     }
     boxes = [
