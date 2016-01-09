@@ -105,6 +105,14 @@ deployConfig {
 
 And, you can use artifactNamesClosure for automatic undeploy previous versions:
 ```groovy
+String getArtifactName(helpers.Artifact a){
+    int downSpace = helpers.StringUtils.rfind(a.displayName, '_' as char)
+    if(downSpace==-1){
+        return a.displayName
+    }
+    return a.displayName.substring(0, downSpace)
+}
+
 deployConfig {
 	deployFile = "scripts/deploy" // list of files to deploy
     artifactNamesClosure = {
