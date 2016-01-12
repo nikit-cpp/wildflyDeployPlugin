@@ -8,6 +8,12 @@ import org.gradle.api.plugins.ExtensionContainer
  * Created by nik on 12.05.15.
  */
 class WildflyDeployPlugin implements Plugin<Project> {
+
+    public static final String REDEPLOY = "redeploy"
+    public static final String DEPLOY = "deploy"
+    public static final String UNDEPLOY = "undeploy"
+
+
     String extensionName = 'deployConfig'
 
     Map boxes
@@ -27,12 +33,10 @@ class WildflyDeployPlugin implements Plugin<Project> {
             createArtifactNamesClosure = project[extensionName].artifactNamesClosure
             force = (project[extensionName].force==null) ? false : project[extensionName].force
 
-            if (taskName.startsWith("redeploy")) {
-                def envMatcher = (taskName =~ /redeploy(.*)/)
-                envMatcher.find()
-
+            if (taskName.startsWith(REDEPLOY)) {
                 project.tasks.create(taskName) << {
-                    def env_name = envMatcher.group(1)
+                    def env_name = getEnvName(taskName, REDEPLOY)
+
                     println "Selected box : ${env_name}"
                     helpers.Server server = boxes[env_name].wildfly
 
@@ -58,12 +62,10 @@ class WildflyDeployPlugin implements Plugin<Project> {
                 }
             }
 
-            if (taskName.startsWith("deploy")) {
-                def envMatcher = (taskName =~ /deploy(.*)/)
-                envMatcher.find()
-
+            if (taskName.startsWith(DEPLOY)) {
                 project.tasks.create(taskName) << {
-                    def env_name = envMatcher.group(1)
+                    def env_name = getEnvName(taskName, DEPLOY)
+
                     println "Selected box : ${env_name}"
                     helpers.Server server = boxes[env_name].wildfly
 
@@ -81,12 +83,10 @@ class WildflyDeployPlugin implements Plugin<Project> {
                 }
             }
 
-            if (taskName.startsWith("undeploy")) {
-                def envMatcher = (taskName =~ /undeploy(.*)/)
-                envMatcher.find()
-
+            if (taskName.startsWith(UNDEPLOY)) {
                 project.tasks.create(taskName) << {
-                    def env_name = envMatcher.group(1)
+                    def env_name = getEnvName(taskName, UNDEPLOY)
+
                     println "Selected box : ${env_name}"
                     helpers.Server server = boxes[env_name].wildfly
 
@@ -105,6 +105,13 @@ class WildflyDeployPlugin implements Plugin<Project> {
             }
         }
 
+    }
+
+    String getEnvName (String taskName, String pattern){
+        def envMatcher = (taskName =~ /${pattern}(.*)/)
+        envMatcher.find()
+        def env_name = envMatcher.group(1)
+        return env_name
     }
     
     void callClosureWithMultipleParameters(Closure closure, helpers.Server server, String envName){
