@@ -3,6 +3,7 @@ package com.github.nikit.cpp.wildfly
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.api.tasks.StopExecutionException
 
 /**
  * Created by nik on 12.05.15.
@@ -38,15 +39,15 @@ class WildflyDeployPlugin implements Plugin<Project> {
                     def env_name = getEnvName(taskName, REDEPLOY)
 
                     println "Selected box : ${env_name}"
-                    helpers.Server server = boxes[env_name].wildfly
+                    helpers.Server server = getBox(env_name).wildfly
 
-                    Closure beforeClosure = boxes[env_name].before
-                    Closure afterClosure = boxes[env_name].after
+                    Closure beforeClosure = getBox(env_name).before
+                    Closure afterClosure = getBox(env_name).after
 
-                    Closure beforeDeployClosure = boxes[env_name].beforeDeploy
-                    Closure afterDeployClosure = boxes[env_name].afterDeploy
-                    Closure beforeUndeployClosure = boxes[env_name].beforeUndeploy
-                    Closure afterUndeployClosure = boxes[env_name].afterUndeploy
+                    Closure beforeDeployClosure = getBox(env_name).beforeDeploy
+                    Closure afterDeployClosure = getBox(env_name).afterDeploy
+                    Closure beforeUndeployClosure = getBox(env_name).beforeUndeploy
+                    Closure afterUndeployClosure = getBox(env_name).afterUndeploy
 
                     callClosureWithMultipleParameters(beforeClosure, server, env_name)
 
@@ -67,13 +68,13 @@ class WildflyDeployPlugin implements Plugin<Project> {
                     def env_name = getEnvName(taskName, DEPLOY)
 
                     println "Selected box : ${env_name}"
-                    helpers.Server server = boxes[env_name].wildfly
+                    helpers.Server server = getBox(env_name).wildfly
 
-                    Closure beforeClosure = boxes[env_name].before
-                    Closure afterClosure = boxes[env_name].after
+                    Closure beforeClosure = getBox(env_name).before
+                    Closure afterClosure = getBox(env_name).after
 
-                    Closure beforeDeployClosure = boxes[env_name].beforeDeploy
-                    Closure afterDeployClosure = boxes[env_name].afterDeploy
+                    Closure beforeDeployClosure = getBox(env_name).beforeDeploy
+                    Closure afterDeployClosure = getBox(env_name).afterDeploy
 
                     callClosureWithMultipleParameters(beforeClosure, server, env_name)
                     callClosureWithMultipleParameters(beforeDeployClosure, server, env_name)
@@ -88,13 +89,13 @@ class WildflyDeployPlugin implements Plugin<Project> {
                     def env_name = getEnvName(taskName, UNDEPLOY)
 
                     println "Selected box : ${env_name}"
-                    helpers.Server server = boxes[env_name].wildfly
+                    helpers.Server server = getBox(env_name).wildfly
 
-                    Closure beforeClosure = boxes[env_name].before
-                    Closure afterClosure = boxes[env_name].after
+                    Closure beforeClosure = getBox(env_name).before
+                    Closure afterClosure = getBox(env_name).after
 
-                    Closure beforeUndeployClosure = boxes[env_name].beforeUndeploy
-                    Closure afterUndeployClosure = boxes[env_name].afterUndeploy
+                    Closure beforeUndeployClosure = getBox(env_name).beforeUndeploy
+                    Closure afterUndeployClosure = getBox(env_name).afterUndeploy
 
                     callClosureWithMultipleParameters(beforeClosure, server, env_name)
                     callClosureWithMultipleParameters(beforeUndeployClosure, server, env_name)
@@ -107,11 +108,19 @@ class WildflyDeployPlugin implements Plugin<Project> {
 
     }
 
-    String getEnvName (String taskName, String pattern){
+    String getEnvName(String taskName, String pattern){
         def envMatcher = (taskName =~ /${pattern}(.+)/)
         envMatcher.find()
         def env_name = envMatcher.group(1)
         return env_name
+    }
+
+    def getBox(String envName){
+        def box = boxes[envName]
+        if (null == box){
+            throw new RuntimeException("Box with name ${envName} not found");
+        }
+        return box
     }
     
     void callClosureWithMultipleParameters(Closure closure, helpers.Server server, String envName){
