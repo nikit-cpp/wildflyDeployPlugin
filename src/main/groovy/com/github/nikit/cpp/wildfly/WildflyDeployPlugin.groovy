@@ -108,7 +108,7 @@ class WildflyDeployPlugin implements Plugin<Project> {
     }
 
     String getEnvName (String taskName, String pattern){
-        def envMatcher = (taskName =~ /${pattern}(.*)/)
+        def envMatcher = (taskName =~ /${pattern}(.+)/)
         envMatcher.find()
         def env_name = envMatcher.group(1)
         return env_name
