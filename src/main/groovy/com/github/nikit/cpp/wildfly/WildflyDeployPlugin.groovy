@@ -145,13 +145,13 @@ class WildflyDeployPlugin implements Plugin<Project> {
 
     void deploy ( helpers.Server server ) {
         helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure, force)
-        deployer.readFile(deployFile)
+        deployer.prepareForDeploy(deployFile)
         deployer.deployList()
     }
 
     void undeploy ( helpers.Server server ) {
         helpers.JbossDeployer deployer = new helpers.JbossDeployer(server, jbossHome, createArtifactNamesClosure, force)
-        deployer.readFile(deployFile)
+        deployer.prepareForDeploy(deployFile)
         deployer.undeployList()
     }
 
